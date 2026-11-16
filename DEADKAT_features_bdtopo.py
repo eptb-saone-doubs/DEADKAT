@@ -1,6 +1,9 @@
+# DEADKAT : Détection Automatisée des Dépressions KArsTiques, version 1.0
+# Copyright (C) 2026 EPTB Saône et Doubs
+# SPDX-License-Identifier: GPL-3.0-or-later
 """
-DEADKAT V1.1 - Module Features Anthropiques BD TOPO
-=====================================================
+DEADKAT 1.0 - Module Features Anthropiques BD TOPO
+====================================================
 
 Calcule les 18 features de contexte anthropique pour chaque dépression candidate,
 à partir des 8 couches BD TOPO chargées par load_bdtopo_layers().
@@ -96,7 +99,7 @@ def build_spatial_indexes(bdtopo_layers):
     """
     Construit un QgsSpatialIndex pour chaque couche BD TOPO présente.
 
-    V1.3 OPTIMISATION : précharge en RAM les géométries ET les attributs
+    OPTIMISATION : précharge en RAM les géométries ET les attributs
     pertinents pour chaque couche. Cela évite des milliers d'appels
     layer.getFeature(fid) (seek disque GPKG) lors du calcul des features.
 
@@ -198,7 +201,7 @@ def _nearest_feature_and_distance(geom_depression, spatial_info, max_radius=MAX_
     """
     Trouve la feature la plus proche de la frontière d'une dépression.
 
-    V1.3 : utilise le cache RAM 'geoms' au lieu de layer.getFeature() (disque).
+    utilise le cache RAM 'geoms' au lieu de layer.getFeature() (disque).
 
     Returns
     -------
@@ -437,7 +440,7 @@ def _nearest_road_by_importance(geom_depression, route_info):
     Retourne (dist_majeure, dist_mineure) en scannant toutes les routes
     dans le rayon de recherche, puis en filtrant par importance.
 
-    V1.3 : utilise le cache RAM (geoms + attrs préchargés). Plus aucun
+    utilise le cache RAM (geoms + attrs préchargés). Plus aucun
     getFeature() disque. Le gain est massif sur les sites à grand nombre
     de routes (Chailluz : 2500+ tronçons).
     """
@@ -483,7 +486,7 @@ def _nearest_road_by_importance(geom_depression, route_info):
 def _road_density_in_buffer(geom_depression, route_info, buffer_m):
     """Densité routière = longueur totale de route dans le buffer / surface du buffer (m/m²).
 
-    V1.3 : cache RAM pour les géométries.
+    cache RAM pour les géométries.
     """
     buffered = geom_depression.buffer(buffer_m, 8)
     idx = route_info['index']
@@ -555,7 +558,7 @@ def _dominant_vegetation_in_buffer(geom_depression, veg_info, buffer_m):
     Retourne (dominant_nature, is_in_forest).
     Dominance calculée par somme des surfaces de chaque nature dans le buffer.
 
-    V1.3 : cache RAM (geoms + attrs['nature']).
+    cache RAM (geoms + attrs['nature']).
     """
     buffered = geom_depression.buffer(buffer_m, 8)
     idx = veg_info['index']

@@ -1,6 +1,9 @@
+# DEADKAT : Détection Automatisée des Dépressions KArsTiques, version 1.0
+# Copyright (C) 2026 EPTB Saône et Doubs
+# SPDX-License-Identifier: GPL-3.0-or-later
 """
-DEADKAT V1.1 - Module BD TOPO (8 couches, WFS IGN uniquement)
-==============================================================
+DEADKAT 1.0 - Module BD TOPO (8 couches, WFS IGN uniquement)
+=============================================================
 
 Fonctions publiques :
     - fetch_bdtopo_layer_from_wfs() : télécharge UNE couche via WFS
@@ -204,7 +207,7 @@ def fetch_bdtopo_layer_from_wfs(layer_key, mnt_extent, output_folder,
         try:
             req = urllib.request.Request(
                 url,
-                headers={'User-Agent': 'DEADKAT-V1.1 (EPTB Saone et Doubs)'}
+                headers={'User-Agent': 'DEADKAT-1.0 (EPTB Saone et Doubs)'}
             )
             with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as response:
                 data = json.loads(response.read().decode('utf-8'))
@@ -438,7 +441,7 @@ def _add_bdtopo_layers_to_project(bdtopo_result):
 # =============================================================================
 
 def _apply_style(layer, style_type):
-    """Applique un style selon le type. Palette validee V1.1."""
+    """Applique un style selon le type. Palette validee."""
     if style_type == 'fill_gray_light':
         # Bati : gris leger semi-transparent
         _style_fill_solid(layer, color='#888888', alpha=90, outline='#555555', outline_width=0.2)

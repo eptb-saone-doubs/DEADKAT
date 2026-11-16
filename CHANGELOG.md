@@ -19,11 +19,12 @@ Première version publique.
 - Bassins d'alimentation et leur synthèse CSV (étape 11).
 - Exports GeoPackage, tableau de contingence par classe de périmètre (discrétisation de Jenks) et journal d'exécution.
 - Script `DEADKAT_installation.py` de vérification et d'installation des bibliothèques Python.
+- Nom du secteur saisi au lancement. Chaque sortie est nommée `{SECTEUR}_{PARCOURS}_{contenu}_{res}m`, avec un code par parcours : DET, DETHYD, ETIQ, ENTR, ML, MLHYD. Le modèle entraîné est rangé dans un sous-dossier `{NOM}_ENTR_modele`.
+- Choix « Reprendre » ou « Tout recalculer » quand des sorties du même secteur et du même parcours existent déjà dans le dossier de sortie.
 
 ## Prévu pour la version 1.1
 
 - Mode de tuilage automatique pour les grandes emprises : tuiles de 5 × 5 km avec 200 m de chevauchement, reprise sur erreur, fusion et dédoublonnage.
 - Transmission complète des variables de forme et de contexte BD TOPO à l'étape d'application du modèle.
 - Installation des bibliothèques depuis la fenêtre des prérequis.
-- Harmonisation des numéros de version affichés et de l'écriture de la résolution dans les noms de fichiers.
 - Étude d'une distribution sous forme de plugin QGIS.

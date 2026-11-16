@@ -21,12 +21,15 @@ Sur le secteur test de Septfontaines (Doubs, 4 km²), 89 % des 110 détections v
 | `DEADKAT_bdtopo.py` | Téléchargement des 8 couches BD TOPO par le service WFS de la Géoplateforme IGN |
 | `DEADKAT_features_bdtopo.py` | Calcul des 18 variables de contexte anthropique |
 | `DEADKAT_installation.py` | Vérification et installation des bibliothèques Python, contrôle de GRASS |
-| `docs/Rapport_DEADKAT_v1.0.pdf` | Rapport méthodologique et guide d'utilisation |
 | `README.md` | Ce fichier |
 | `CHANGELOG.md` | Historique des versions |
 | `LICENSE` | Texte de la licence GPL-3.0 |
 
 Les quatre fichiers `.py` doivent se trouver dans un même dossier.
+
+## Documentation
+
+Le rapport méthodologique et guide d'utilisation (version 1.0) est disponible dans les ressources documentaires de l'ORISK, Observatoire du Risque Inondation, de la Sécheresse et du Karst en Bourgogne-Franche-Comté : https://orisk-bfc.fr/ressources-documenataires?items_per_page=16&type_2%5B62314%5D=62314&type_2%5B60112%5D=60112&type_2%5B62315%5D=62315
 
 ## Prérequis
 
@@ -50,34 +53,43 @@ pip.main(['install', '--user', 'pandas', 'jenkspy', 'scikit-learn', 'joblib'])
 
 ## Utilisation
 
-Ouvrir `DEADKAT.py` dans l'éditeur de la console Python de QGIS et cliquer sur **Exécuter le script**. L'outil enchaîne les boîtes de dialogue : fenêtre des prérequis, résolution d'analyse, parcours, dossier de sortie, MNT, puis réglages de détection (lissage, remplissage, périmètres, dénivelé minimal, stratégie anti-buttes).
+Ouvrir `DEADKAT.py` dans l'éditeur de la console Python de QGIS et cliquer sur **Exécuter le script**. L'outil enchaîne les boîtes de dialogue : fenêtre des prérequis, résolution d'analyse, parcours, dossier de sortie, MNT, nom du secteur, puis réglages de détection (lissage, remplissage, périmètres, dénivelé minimal, stratégie anti-buttes).
 
 Six parcours sont proposés :
 
-| Parcours | Rôle |
-| --- | --- |
-| Option 1 | Détection seule (inventaire rapide) |
-| Option 2 | Détection et analyse hydrologique |
-| ML-1 | Création d'un jeu d'entraînement par étiquetage |
-| ML-2 | Entraînement d'un modèle à partir des fichiers d'annotation |
-| ML-3a | Application d'un modèle entraîné |
-| ML-3b | Application d'un modèle entraîné, puis analyse hydrologique |
+| Parcours | Code | Rôle |
+| --- | --- | --- |
+| Option 1 | DET | Détection seule (inventaire rapide) |
+| Option 2 | DETHYD | Détection et analyse hydrologique |
+| ML-1 | ETIQ | Création d'un jeu d'entraînement par étiquetage |
+| ML-2 | ENTR | Entraînement d'un modèle à partir des fichiers d'annotation |
+| ML-3a | ML | Application d'un modèle entraîné |
+| ML-3b | MLHYD | Application d'un modèle entraîné, puis analyse hydrologique |
 
-Les résultats sont écrits dans le dossier de sortie. Le fichier `journal.log` y retrace chaque traitement et les statistiques de filtrage. L'annexe A du rapport détaille chaque réglage et chaque sortie.
+Chaque sortie est nommée `{SECTEUR}_{PARCOURS}_{contenu}_{res}m`, par exemple `Septfontaines_DET_depressions_finales_0_5m.gpkg`. Le secteur est demandé au lancement ; le nom du MNT est proposé par défaut. Plusieurs secteurs et parcours peuvent ainsi partager un même dossier de sortie sans s'écraser. Le parcours ML-2 range le modèle dans un sous-dossier `{NOM}_ENTR_modele`, à désigner ensuite dans les parcours ML-3a et ML-3b.
+
+Si des sorties du même secteur et du même parcours existent déjà, l'outil propose de les reprendre (fichiers déjà calculés réutilisés) ou de tout recalculer. Après un changement de réglage, choisir « Tout recalculer ».
+
+Le journal `{SECTEUR}_{PARCOURS}_journal.log` retrace chaque traitement et les statistiques de filtrage. L'annexe A du rapport (voir Documentation) détaille chaque réglage et chaque sortie.
 
 ## Principales sorties
 
 | Fichier | Contenu |
 | --- | --- |
-| `depressions_finales_{rés}m.gpkg` | Dépressions vérifiées et leurs attributs morphométriques |
-| `formes_rejetees_{rés}m.gpkg` | Formes écartées, avec le motif du rejet (champ `Raison_Rej`) |
-| `depressions_ml_naturelles_{rés}m.gpkg`, `depressions_ml_anthropiques_{rés}m.gpkg` | Dépressions classées par le modèle, avec classe et score de confiance |
-| `exutoires_{rés}m.gpkg` | Points d'entrée et points bas |
-| `bassins_{rés}m.gpkg`, `synthese_bassins_{rés}m.csv` | Bassins d'alimentation et leur synthèse |
-| `synthese_{rés}m.csv` | Tableau de contingence par classe de périmètre |
+Chaque nom ci-dessous est précédé de `{SECTEUR}_{PARCOURS}_`.
+
+| Fichier | Contenu |
+| --- | --- |
+| `depressions_finales_{res}m.gpkg` | Dépressions vérifiées et leurs attributs morphométriques |
+| `formes_rejetees_{res}m.gpkg` | Formes écartées, avec le motif du rejet (champ `Raison_Rej`) |
+| `entrainement_{classe}.csv`, `etiquetees_{classe}.gpkg` | Jeu d'entraînement, un fichier par classe (parcours ETIQ) |
+| `depressions_ml_naturelles_{res}m.gpkg`, `depressions_ml_anthropiques_{res}m.gpkg` | Dépressions classées par le modèle, avec classe et score de confiance |
+| `exutoires_{res}m.gpkg` | Points d'entrée et points bas |
+| `bassins_{res}m.gpkg`, `synthese_bassins_{res}m.csv` | Bassins d'alimentation et leur synthèse |
+| `synthese_{res}m.csv` | Tableau de contingence par classe de périmètre |
 | `journal.log` | Journal d'exécution |
 
-`{rés}` désigne la résolution d'analyse : `0_5` pour 0,5 m dans la plupart des noms, `0.5` pour les points et les bassins.
+`{res}` désigne la résolution d'analyse, écrite avec un tiret bas : `0_5` pour 0,5 m. Les fichiers du modèle (`modele_rf.joblib` et métadonnées) gardent un nom fixe dans le sous-dossier `{NOM}_ENTR_modele`.
 
 ## Limites
 
@@ -87,7 +99,7 @@ Les résultats sont écrits dans le dossier de sortie. Le fichier `journal.log` 
 
 ## Citer DEADKAT
 
-Fister, V. (2026). *DEADKAT : Détection Automatisée des Dépressions KArsTiques. Développement méthodologique et guide d'utilisation.* Version 1.0. EPTB Saône et Doubs, Pôle Karst. 42 p.
+Fister, V. (2026). *DEADKAT : Détection Automatisée des Dépressions KArsTiques. Développement méthodologique et guide d'utilisation.* Version 1.0. EPTB Saône et Doubs, Pôle Karst. https://github.com/eptb-saone-doubs/DEADKAT
 
 ## Licence
 
@@ -99,4 +111,4 @@ L'outil ne redistribue aucune donnée. L'utilisateur télécharge lui-même le M
 
 ## Contact
 
-Vincent Fister. Pôle Karst, EPTB Saône et Doubs. Pour signaler un problème ou proposer une amélioration, utiliser l'onglet **Issues** du dépôt.
+Pôle Karst, EPTB Saône et Doubs. Pour signaler un problème ou proposer une amélioration, utiliser l'onglet **Issues** du dépôt.
